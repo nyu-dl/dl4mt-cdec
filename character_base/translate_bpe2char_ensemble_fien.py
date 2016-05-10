@@ -5,10 +5,9 @@ import argparse
 
 import numpy
 import cPickle as pkl
-import ipdb
 
 from nmt import (build_sampler, init_params)
-from CHDec.mixer import *
+from mixer import *
 
 from multiprocessing import Process, Queue
 

@@ -1,5 +1,4 @@
 import os
-import ipdb
 
 from collections import OrderedDict
 from char_base_both import train
