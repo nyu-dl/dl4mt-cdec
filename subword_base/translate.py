@@ -6,8 +6,8 @@ import argparse
 import numpy
 import cPickle as pkl
 
-from nmt_both import (build_sampler, gen_sample, init_params)
-from CHDec.mixer import *
+from subword_base import (build_sampler, gen_sample, init_params)
+from mixer import *
 
 from multiprocessing import Process, Queue
 

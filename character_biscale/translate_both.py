@@ -6,8 +6,8 @@ import argparse
 import numpy
 import cPickle as pkl
 
-from nmt_attc import (build_sampler, gen_sample, init_params)
-from CHDec.mixer import *
+from char_biscale_both import (build_sampler, gen_sample, init_params)
+from mixer import *
 
 from multiprocessing import Process, Queue
 
@@ -59,7 +59,7 @@ def translate_model(queue, rqueue, pid, model, options, k, normalize):
 
 def main(model, dictionary, dictionary_target, source_file, saveto, k=5,
          normalize=False, n_process=5, encoder_chr_level=False,
-         decoder_chr_level=False, utf8=False):
+         decoder_chr_level=False, utf8=False, decoder_bpe_to_tok=False):
 
     # load model model_options
     pkl_file = model.split('.')[0] + '.pkl'
@@ -122,11 +122,6 @@ def main(model, dictionary, dictionary_target, source_file, saveto, k=5,
                 x = map(lambda w: word_dict[w] if w in word_dict else 1, words)
                 x = map(lambda ii: ii if ii < options['n_words_src'] else 1, x)
                 x += [0]
-                #print '=============================='
-                #print line
-                #print '------------------------------'
-                #print ' '.join([word_idict[wx] for wx in x])
-                #print '=============================='
                 queue.put((idx, x))
         return idx+1
 
@@ -148,7 +143,10 @@ def main(model, dictionary, dictionary_target, source_file, saveto, k=5,
     trans = _seqs2words(_retrieve_jobs(n_samples))
     _finish_processes()
     with open(saveto, 'w') as f:
-        print >>f, '\n'.join(trans)
+        if decoder_bpe_to_tok:
+            print >>f, '\n'.join(trans).replace('@@ ', '')
+        else:
+            print >>f, '\n'.join(trans)
     print 'Done'
 
 
@@ -157,6 +155,7 @@ if __name__ == "__main__":
     parser.add_argument('-k', type=int, default=5)
     parser.add_argument('-p', type=int, default=5)
     parser.add_argument('-n', action="store_true", default=False)
+    parser.add_argument('-bpe', action="store_true", default=False)
     parser.add_argument('-enc_c', action="store_true", default=False)
     parser.add_argument('-dec_c', action="store_true", default=False)
     parser.add_argument('-utf8', action="store_true", default=False)
@@ -172,4 +171,4 @@ if __name__ == "__main__":
          args.saveto, k=args.k, normalize=args.n, n_process=args.p,
          encoder_chr_level=args.enc_c,
          decoder_chr_level=args.dec_c,
-         utf8=args.utf8)
+         utf8=args.utf8, decoder_bpe_to_tok=args.bpe)
