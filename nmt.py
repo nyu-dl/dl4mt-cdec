@@ -82,6 +82,7 @@ def pred_probs(f_log_probs, prepare_data, options, iterator, verbose=True, verbo
             probs.append(pp)
 
         if numpy.isnan(numpy.mean(probs)):
+            import ipdb
             ipdb.set_trace()
 
         if verbose:
@@ -172,6 +173,7 @@ def train(
     file_name = '%s%s.npz' % (save_path, save_file_name)
     best_file_name = '%s%s.best.npz' % (save_path, save_file_name)
     opt_file_name = '%s%s%s.npz' % (save_path, save_file_name, '.grads')
+    best_opt_file_name = '%s%s%s.best.npz' % (save_path, save_file_name, '.grads')
     model_name = '%s%s.pkl' % (save_path, save_file_name)
     params = init_params(model_options)
     cPickle.dump(model_options, open(model_name, 'wb'))
@@ -249,6 +251,7 @@ def train(
         valid_err = valid_errs.mean()
 
         if numpy.isnan(valid_err):
+            import ipdb
             ipdb.set_trace()
 
         print 'Reload sanity check: Valid ', valid_err
@@ -484,11 +487,13 @@ def train(
 
                 if uidx == 0 or valid_err <= numpy.array(history_errs).min():
                     best_p = unzip(tparams)
+                    best_optp = unzip(toptparams)
                     bad_counter = 0
 
                 if saveFreq != validFreq and save_best_models:
                     numpy.savez(best_file_name, history_errs=history_errs, uidx=uidx, eidx=eidx,
                                 cidx=cdix, **best_p)
+                    numpy.savez(best_opt_file_name, **best_optp)
 
                 if len(history_errs) > patience and valid_err >= \
                         numpy.array(history_errs)[:-patience].min() and patience != -1:
@@ -499,6 +504,7 @@ def train(
                         break
 
                 if numpy.isnan(valid_err):
+                    import ipdb
                     ipdb.set_trace()
 
                 print 'Valid ', valid_err
@@ -514,8 +520,7 @@ def train(
                 optparams = unzip(toptparams)
                 numpy.savez(file_name, history_errs=history_errs, uidx=uidx, eidx=eidx,
                             cidx=cidx, **params)
-                numpy.savez(opt_file_name, history_errs=history_errs, uidx=uidx, eidx=eidx,
-                            cidx=cidx, **optparams)
+                numpy.savez(opt_file_name, **optparams)
 
                 if save_every_saveFreq and (uidx >= save_burn_in):
                     this_file_name = '%s%s.%d.npz' % (save_path, save_file_name, uidx)
@@ -550,11 +555,16 @@ def train(
     print 'Valid ', valid_err
 
     params = unzip(tparams)
+    optparams = unzip(toptparams)
     file_name = '%s%s.%d.npz' % (save_path, save_file_name, uidx)
+    opt_file_name = '%s%s%s.%d.npz' % (save_path, save_file_name, '.grads', uidx)
     numpy.savez(file_name, history_errs=history_errs, uidx=uidx, eidx=eidx, cidx=cidx, **params)
+    numpy.savez(opt_file_name, **optparams)
     if best_p is not None and saveFreq != validFreq:
         best_file_name = '%s%s.%d.best.npz' % (save_path, save_file_name, uidx)
+        best_opt_file_name = '%s%s%s.%d.best.npz' % (save_path, save_file_name, '.grads',uidx)
         numpy.savez(best_file_name, history_errs=history_errs, uidx=uidx, eidx=eidx, cidx=cidx, **best_p)
+        numpy.savez(best_opt_file_name, **best_optp)
 
     return valid_err
 
