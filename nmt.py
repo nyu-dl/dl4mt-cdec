@@ -203,6 +203,8 @@ def train(
             uidx = 0
         if eidx is None:
             eidx = 0
+        if cidx is None:
+            cidx = 0
 
     print 'Loading data'
     train = TextIterator(source=datasets[0],

@@ -117,9 +117,8 @@ class TextIterator:
         if len(self.source_buffer) == 0:
             for k_ in xrange(self.k):
                 ss = self.source.readline()
-                tt = self.target.readline()
 
-                if ss == "" or tt == "":
+                if ss == "":
                     break
 
                 if self.source_word_level:
@@ -128,14 +127,21 @@ class TextIterator:
                     ss = ss.strip()
                     ss = list(ss.decode('utf8'))
 
-                if self.target_word_level:
-                    tt = tt.strip().split()
-                else:
-                    tt = tt.strip()
-                    tt = list(tt.decode('utf8'))
-
                 self.source_buffer.append(ss)
-                self.target_buffer.append(tt)
+
+                if self.target is not None:
+                    tt = self.target.readline()
+
+                    if tt == "":
+                        break
+
+                    if self.target_word_level:
+                        tt = tt.strip().split()
+                    else:
+                        tt = tt.strip()
+                        tt = list(tt.decode('utf8'))
+
+                    self.target_buffer.append(tt)
 
             if self.target is not None:
                 # sort by target buffer
