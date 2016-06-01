@@ -3,7 +3,6 @@ import fileinput
 import numpy
 import sys
 import codecs
-import ipdb
 
 from collections import OrderedDict
 
