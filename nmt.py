@@ -494,7 +494,7 @@ def train(
 
                 if saveFreq != validFreq and save_best_models:
                     numpy.savez(best_file_name, history_errs=history_errs, uidx=uidx, eidx=eidx,
-                                cidx=cdix, **best_p)
+                                cidx=cidx, **best_p)
                     numpy.savez(best_opt_file_name, **best_optp)
 
                 if len(history_errs) > patience and valid_err >= \
