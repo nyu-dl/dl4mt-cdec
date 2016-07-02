@@ -49,7 +49,7 @@ def init_params(options):
 
     print "target dictionary size: %d" % options['n_words']
     # decoder
-    params = get_layer('seg_gru_decoder_attc')[0](options, params,
+    params = get_layer('biscale_decoder_attc')[0](options, params,
                                                   prefix='decoder',
                                                   nin=options['dim_word'],
                                                   dim_char=options['dec_dim'],
@@ -134,7 +134,7 @@ def build_model(tparams, options):
     yemb = yemb_shited
 
     char_h, word_h, bound_c, bound_w, ctxs, alphas = \
-            get_layer('seg_gru_decoder_attc')[1](tparams, yemb, options,
+            get_layer('biscale_decoder_attc')[1](tparams, yemb, options,
                                                  prefix='decoder',
                                                  mask=y_mask,
                                                  context=ctx,
@@ -217,7 +217,7 @@ def build_sampler(tparams, options, trng, use_noise):
                          tparams['Wemb_dec'][y])
 
     next_state_char, next_state_word, next_bound_char, next_bound_word, next_ctx, next_alpha = \
-            get_layer('seg_gru_decoder_attc')[1](tparams, yemb, options,
+            get_layer('biscale_decoder_attc')[1](tparams, yemb, options,
                                                  prefix='decoder',
                                                  context=ctx,
                                                  mask=None,
