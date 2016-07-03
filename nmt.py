@@ -194,10 +194,7 @@ def train(
         if eidx is None:
             eidx = model['eidx']
         if cidx is None:
-            try:
-                cidx = model['cidx']
-            except:
-                cidx = 0
+            cidx = model['cidx']
     else:
         if uidx is None:
             uidx = 0
