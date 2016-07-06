@@ -329,11 +329,14 @@ def train(
             train.next()
 
     for epoch in xrange(max_epochs):
-        cidx = 0
         n_samples = 0
         NaN_grad_cnt = 0
         NaN_cost_cnt = 0
         clipped_cnt = 0
+        if re_load:
+            re_load = 0
+        else:
+            cidx = 0
 
         for x, y in train:
             cidx += 1
